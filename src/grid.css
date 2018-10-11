@@ -1,0 +1,6 @@
+.grid{
+    display: grid; 
+    grid-column: 3;
+    grid-template-columns: 25% 50% 25%;
+    width: 100%;
+}
