@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './grid.css';
 import Metronome from './Metronome';
+import Searchreturn from './searchreturn'; 
 
 
 class Layout extends Component {
@@ -8,6 +9,7 @@ class Layout extends Component {
       return (
         <div className="grid">
                 <Metronome />
+                <Searchreturn />
         </div>
       );
     }
