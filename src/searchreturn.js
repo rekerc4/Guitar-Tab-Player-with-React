@@ -13,19 +13,49 @@ class Searchreturn extends React.Component{
        }
     }
     
-    
+    parseTab = (tab) => {
+        let changeArr = []
+        for(let i = 0; i < tab.length; i++){
+            if(tab.charAt(i) === "["){
+                changeArr.push(true); 
+            }
+            else{
+                changeArr.push(false);
+            }
+        }
+    }
+
+    getChords = (tab) => {
+        let chords = tab.match(/[^\[]+(?=\])/g);
+        return chords; 
+    }
+
+    displayString = (tab) => {
+        let lyrics = tab.replace(/\[(.*?)\]/g, ""); 
+        return lyrics; 
+    }
 
     getsong = () => {
-        console.log(this.state.inputValue);
         let entered = this.state.inputValue; 
+        console.log(entered);
         let url = encodeURI("http://api.guitarparty.com/v2/songs/?query=" + entered);   
-        fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json', 'Guitarparty-Api-Key': '<API_KEY>'}}).then((res, ret, error) => {
+        fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json', 'Guitarparty-Api-Key': 'cb698fa1f661c22f983099a299c0a525d5847d18'}}).then((res, ret, error) => {
             return res.json(); 
         }).then( (data) => {
-            console.log(data);
-            this.setState({retElement: data.objects[0].body}) ;
-            console.log(this.state.retElement);
-        })
+            if(data.objects.length === 0){
+                 this.setState({retElement: "No Song of that name is found"})
+            }
+            else{
+            let lyrics = this.displayString(data.objects[0].body);
+            let chords = this.getChords(data.objects[0].body);
+            console.log(chords);
+            console.log(lyrics); 
+            this.parseTab(data.objects[0].body);
+            this.setState({retElement: data.objects[0].body});
+            }
+        }).then( (data) => {
+
+        });
     }
 
     updateInputValue(evt) {
