@@ -8,16 +8,23 @@ class Searchreturn extends React.Component{
        this.state = {
            data: [], 
            defualtSearch: "Jolene",
-           inputValue: ''
+           inputValue: '',
+           retElement: 'null'
        }
     }
     
+    
+
     getsong = () => {
         console.log(this.state.inputValue);
         let entered = this.state.inputValue; 
-        let url = 'http://api.guitarparty.com/v2/songs/?API_KEY=\'<API-KEY>\'&query=' + entered;   
-        fetch(url).then((res) => {
-            console.log(res); 
+        let url = encodeURI("http://api.guitarparty.com/v2/songs/?query=" + entered);   
+        fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json', 'Guitarparty-Api-Key': '<API_KEY>'}}).then((res, ret, error) => {
+            return res.json(); 
+        }).then( (data) => {
+            console.log(data);
+            this.setState({retElement: data.objects[0].body}) ;
+            console.log(this.state.retElement);
         })
     }
 
@@ -32,6 +39,7 @@ class Searchreturn extends React.Component{
         return (
           <section className="searcharea" id="searcharea">
             <div className="return" id="return">
+                <code>{this.state.retElement}</code>
             </div>
             <div className="search" id="search">
                 <input type="text" className="bar" id="bar" value={this.state.inputValue} onChange={(evt) =>  {this.updateInputValue(evt)}}>
