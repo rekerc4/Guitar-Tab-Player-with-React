@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Metronome from './Metronome';
 import './searchreturn.css';
 
 class Searchreturn extends React.Component{
@@ -15,14 +16,18 @@ class Searchreturn extends React.Component{
     
     parseTab = (tab) => {
         let changeArr = []
+        let beatCount = 0
         for(let i = 0; i < tab.length; i++){
             if(tab.charAt(i) === "["){
                 changeArr.push(true); 
+                beatCount = 0;
             }
             else{
-                changeArr.push(false);
+                beatCount++
+                changeArr.push(beatCount);
             }
         }
+        return changeArr;
     }
 
     getChords = (tab) => {
@@ -36,6 +41,7 @@ class Searchreturn extends React.Component{
     }
 
     getsong = () => {
+        console.log(this.props);
         let entered = this.state.inputValue; 
         console.log(entered);
         let url = encodeURI("http://api.guitarparty.com/v2/songs/?query=" + entered);   
@@ -50,11 +56,12 @@ class Searchreturn extends React.Component{
             let chords = this.getChords(data.objects[0].body);
             console.log(chords);
             console.log(lyrics); 
-            this.parseTab(data.objects[0].body);
-            this.setState({retElement: data.objects[0].body});
+            let pacer = this.parseTab(data.objects[0].body);
+            console.log(pacer);
+            return {"lyrics": lyrics, "chords": chords, "change": pacer};
             }
         }).then( (data) => {
-
+            this.setState({retElement: data.lyrics});
         });
     }
 

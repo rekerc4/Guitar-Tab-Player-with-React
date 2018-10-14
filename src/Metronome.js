@@ -7,19 +7,17 @@ class Metronome extends Component {
       super(props);
   
       this.state = {
-        playing: false,
         count: 0,
         bpm: 100,
         beatsPerMeasure: 4
       };
-
       this.click1 = new Audio(click1);
     }
 
     handleBpmChange = event => {
-        const bpm = event.target.value;
-        this.setState({ bpm });
-      }
+         const bpm = event.target.value;
+         this.setState({ bpm });
+    }
     
     beat = () => {
         this.click1.play();
@@ -28,13 +26,18 @@ class Metronome extends Component {
     }
 
     startStop = () => {
-        if(this.state.playing){
+        if(this.props.playing){
+            console.log("fired");
+            this.props.handleChangePlayState(false);
             clearInterval(this.timer); 
-            this.setState({playing: false});
+            console.log(this.state); 
+            //this.setState({playing: false});
         }
         else{
+            this.props.handleChangePlayState(true);
+            console.log(this.props);
             this.timer = setInterval(this.beat,  (60 / this.state.bpm) * 1000);
-            this.setState({playing: true}); 
+            //this.setState({playing: true}); 
         }
        }
   
@@ -42,13 +45,13 @@ class Metronome extends Component {
       const { playing, bpm } = this.state;
   
       return (
-        <div className="metronome">
+        <section className="metronome">
           <div className="bpm-slider">
             <div>{bpm} BPM</div>
             <input type="range" min="60" max="240" value={bpm} onChange={this.handleBpmChange}/>
           </div>
           <button className="btn" onClick={this.startStop}>{playing ? 'Stop' : 'Play'}</button>
-        </div>
+        </section>
       );
     }
   }
