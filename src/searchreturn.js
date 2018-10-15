@@ -75,7 +75,7 @@ class Searchreturn extends React.Component{
         let entered = this.state.inputValue; 
         console.log(entered);
         let url = encodeURI("http://api.guitarparty.com/v2/songs/?query=" + entered);   
-        fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json', 'Guitarparty-Api-Key': 'cb698fa1f661c22f983099a299c0a525d5847d18'}}).then((res, ret, error) => {
+        fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json', 'Guitarparty-Api-Key': '<API-KEY>'}}).then((res, ret, error) => {
             return res.json(); 
         }).then( (data) => {
             if(data.objects.length === 0){
