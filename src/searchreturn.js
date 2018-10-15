@@ -10,23 +10,30 @@ class Searchreturn extends React.Component{
            data: [], 
            defualtSearch: "Jolene",
            inputValue: '',
-           retElement: 'null'
+           retElement: 'null', 
+           displayChords: 'null'
        }
     }
     
-    parseTab = (tab) => {
-        let changeArr = []
-        let beatCount = 0
-        for(let i = 0; i < tab.length; i++){
-            if(tab.charAt(i) === "["){
-                changeArr.push(true); 
-                beatCount = 0;
-            }
-            else{
-                beatCount++
-                changeArr.push(beatCount);
-            }
+    parseTab = (tabbed) => {
+        let tab = tabbed.replace(/\\n|\\r/, '').replace(/\s\s+/g, ' ');
+        console.log(tab);
+        let position = tab.indexOf('[');
+        let changeArr = [];
+        changeArr.push(position);
+        let subtractor = 0; 
+        while(tab.indexOf('[', position + 1) !== -1){
+            position = tab.indexOf('[', position + 1);
+            changeArr.push(position);
+            
         }
+        let subtractor = 0 
+        console.log(changeArr);
+        for(let i = 0; i < changeArr.length; i++){
+            changeArr[i] = changeArr[i] - subtractor;
+            subtractor += 4;
+        }
+        console.log(changeArr);
         return changeArr;
     }
 
@@ -36,12 +43,35 @@ class Searchreturn extends React.Component{
     }
 
     displayString = (tab) => {
-        let lyrics = tab.replace(/\[(.*?)\]/g, ""); 
+        let tabbed = tab.replace(/\\n|\\r/, "");
+        let lyrics = tabbed.replace(/\[(.*?)\]/g, ""); 
         return lyrics; 
+    }
+
+    addSpaceBetweenChords = (spaces, chords) => {
+        let str = ""
+        console.log(chords);
+        let iterator = 0;
+        let getChord = 0; 
+        console.log(spaces[spaces.length - 1]);
+        while(iterator <= spaces[spaces.length - 1]){
+            if(spaces[getChord] === iterator){
+                str += chords[getChord];
+                getChord++;
+                console.log("fired");
+            }
+            else{
+                str += " ";
+            }
+            iterator++; 
+        }
+        console.log(str);
+        return str; 
     }
 
     getsong = () => {
         console.log(this.props);
+        console.log(document.getElementById("search").getBoundingClientRect().width)
         let entered = this.state.inputValue; 
         console.log(entered);
         let url = encodeURI("http://api.guitarparty.com/v2/songs/?query=" + entered);   
@@ -52,16 +82,18 @@ class Searchreturn extends React.Component{
                  this.setState({retElement: "No Song of that name is found"})
             }
             else{
+            console.log(data.objects[0].body.length);
             let lyrics = this.displayString(data.objects[0].body);
             let chords = this.getChords(data.objects[0].body);
-            console.log(chords);
-            console.log(lyrics); 
             let pacer = this.parseTab(data.objects[0].body);
-            console.log(pacer);
-            return {"lyrics": lyrics, "chords": chords, "change": pacer};
+            let chordsAbove = this.addSpaceBetweenChords(pacer, chords);
+            console.log(chordsAbove);
+            console.log(lyrics);
+            return {"lyrics": lyrics, "chords": chords, "change": pacer, "chordsAbove": chordsAbove};
             }
         }).then( (data) => {
             this.setState({retElement: data.lyrics});
+            this.setState({displayChords: data.chordsAbove});
         });
     }
 
@@ -75,8 +107,11 @@ class Searchreturn extends React.Component{
         
         return (
           <section className="searcharea" id="searcharea">
+            <div className="chordNames" id="chordName">
+                {this.state.displayChords.replace(/ /g, "\u00a0")}
+            </div>
             <div className="return" id="return">
-                <code>{this.state.retElement}</code>
+                {this.state.retElement}
             </div>
             <div className="search" id="search">
                 <input type="text" className="bar" id="bar" value={this.state.inputValue} onChange={(evt) =>  {this.updateInputValue(evt)}}>
