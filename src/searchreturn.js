@@ -20,20 +20,28 @@ class Searchreturn extends React.Component{
         console.log(tab);
         let position = tab.indexOf('[');
         let changeArr = [];
-        changeArr.push(position);
-        let subtractor = 0; 
+        changeArr.push(position - 1);
+        let subtractor = 0
+        let i = 1; 
+        console.log(changeArr);
         while(tab.indexOf('[', position + 1) !== -1){
+            console.log(changeArr);
             position = tab.indexOf('[', position + 1);
-            changeArr.push(position);
-            
-        }
-        let subtractor = 0 
-        console.log(changeArr);
-        for(let i = 0; i < changeArr.length; i++){
-            changeArr[i] = changeArr[i] - subtractor;
+            changeArr.push(position - 1);
+            if(tab.charAt(changeArr[i] + subtractor + 2) === ']'){
+                subtractor += 3; 
+            }
+            else if(tab.charAt(changeArr[i] + subtractor + 3) === ']'){
             subtractor += 4;
+            }
+            else{
+                console.log(tab.slice(changeArr[i] -5, changeArr[i] + 5));
+                subtractor += 4; 
+            }
+            changeArr[i] = changeArr[i] - subtractor;
+            i++;
+            console.log(changeArr);
         }
-        console.log(changeArr);
         return changeArr;
     }
 
@@ -75,7 +83,7 @@ class Searchreturn extends React.Component{
         let entered = this.state.inputValue; 
         console.log(entered);
         let url = encodeURI("http://api.guitarparty.com/v2/songs/?query=" + entered);   
-        fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json', 'Guitarparty-Api-Key': '<API-KEY>'}}).then((res, ret, error) => {
+        fetch(url, {method: 'GET', headers: {'Content-Type': 'application/json', 'Guitarparty-Api-Key': 'cb698fa1f661c22f983099a299c0a525d5847d18'}}).then((res, ret, error) => {
             return res.json(); 
         }).then( (data) => {
             if(data.objects.length === 0){
